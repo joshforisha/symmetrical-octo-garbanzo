@@ -29,7 +29,7 @@ jobs:
       - name: Get today's tags
         id: get-today-tags
         env:
-          ESCAPED_DATE: ${{ stepts.escape-date.outputs.ESCAPED_DATE }}
+          ESCAPED_DATE: ${{ steps.escape-date.outputs.ESCAPED_DATE }}
           TODAY_TAGS: ${{ steps.get-today.outputs.TODAY }}
         run: echo "TODAY_TAGS=$(git tag | grep "$ESCAPED_DATE")" >> $GITHUB_OUTPUT
 

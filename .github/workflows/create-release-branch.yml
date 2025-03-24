@@ -1,0 +1,46 @@
+# Create a new release branch based off the last commit in develop branch
+name: Create Release Branch
+on: workflow_dispatch
+
+jobs:
+  create-release-branch:
+    runs-on: stable
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: develop
+
+      - name: Initialize branch name
+        id: initialize-branch-name
+        run: echo "BRANCH_NAME=release/$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Get release branches
+        id: get-release-branches
+        env:
+          BRANCH_NAME: ${{ steps.initialize-branch-name.outputs.BRANCH_NAME }}
+        run: echo "RELEASE_BRANCHES=$(git branch -r | grep "origin/${BRANCH_NAME}")" >> "$GITHUB_OUTPUT"
+
+      - name: Generate branch name
+        id: generate-branch-name
+        env:
+          BRANCH_NAME: ${{ steps.initialize-branch-name.outputs.BRANCH_NAME }}
+          RELEASE_BRANCHES: ${{ steps.get-release-branches.outputs.RELEASE_BRANCHES }}
+        run: |
+          if [[ -n $RELEASE_BRANCHES ]]; then
+            REV="$(echo $RELEASE_BRANCHES | sed -E 's/origin\/release\/[0-9]{4}-[0-9]{2}-[0-9]{2}(_([0-9]+))?/\2/' | sort -n | tail -n 1)"
+
+            if [[ $REV -ge 1 ]]; then
+              BRANCH_NAME="${BRANCH_NAME}_$((REV + 1))"
+            else
+              BRANCH_NAME="${BRANCH_NAME}_1"
+            fi
+          fi
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push release branch
+        env:
+          BRANCH_NAME: ${{ steps.generate-branch-name.outputs.BRANCH_NAME }}
+        run: |
+          git branch ${BRANCH_NAME}
+          git push origin ${BRANCH_NAME}

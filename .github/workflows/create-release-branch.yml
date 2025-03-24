@@ -42,7 +42,5 @@ jobs:
         env:
           BRANCH_NAME: ${{ steps.generate-branch-name.outputs.BRANCH_NAME }}
         run: |
-          git config user.name "GitHub Action"
-          git config user.email "joshforisha@getethos.com"
           git branch ${BRANCH_NAME}
           git push origin ${BRANCH_NAME}

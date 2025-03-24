@@ -22,11 +22,16 @@ jobs:
         id: get-today
         run: echo "TODAY=$(date '+%Y.%m.%d')" >> $GITHUB_OUTPUT
 
+      - name: Escape date for tag lookup
+        id: escape-date
+        run: echo "ESCAPED_DATE=$(echo $TODAY | sed -E 's/\./\\./g')" >> $GITHUB_OUTPUT
+
       - name: Get today's tags
         id: get-today-tags
         env:
+          ESCAPED_DATE: ${{ stepts.escape-date.outputs.ESCAPED_DATE }}
           TODAY_TAGS: ${{ steps.get-today.outputs.TODAY }}
-        run: echo "TODAY_TAGS=$(git tag | grep "$TODAY")" >> $GITHUB_OUTPUT
+        run: echo "TODAY_TAGS=$(git tag | grep "$ESCAPED_DATE")" >> $GITHUB_OUTPUT
 
       - name: Generate release tag name
         id: generate-tag-name
@@ -36,7 +41,7 @@ jobs:
         run: |
           TAG_NAME="$TODAY"
           if [[ -n $TODAY_TAGS ]]; then
-            REV="$(echo $TODAY_TAGS | set -E 's/[0-9]{4}.[0-9]{2}.[0-9]{2}(.([0-9]+))?/\2/' | sort -n | tail -n 1)"
+            REV="$(echo $TODAY_TAGS | set -E 's/[0-9]{4}\.[0-9]{2}\.[0-9]{2}(\.([0-9]+))?/\2/' | sort -n | tail -n 1)"
             if [[ $REV -ge 1 ]]; then
               TAG_NAME="$TODAY.$((REV + 1))"
             else

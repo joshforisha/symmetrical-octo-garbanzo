@@ -20,7 +20,7 @@ jobs:
 
       - name: Get today's date
         id: get-today
-        run: echo "TODAY=$(date '+%Y-%m-%d')" >> $GITHUB_OUTPUT
+        run: echo "TODAY=$(date '+%Y.%m.%d')" >> $GITHUB_OUTPUT
 
       - name: Get today's tags
         id: get-today-tags

@@ -1,4 +1,4 @@
-# Create a new release branch based off the last commit in develop branch
+# Create a new release branched from develop
 name: Create Release Branch
 on: workflow_dispatch
 

@@ -1,0 +1,53 @@
+name: Build and deploy main
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Manually trigger a workflow_dispatch event via the github actions UI
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  tag_and_update_version:
+    name: Tag and update version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get today's date
+        id: get-today
+        run: echo "TODAY=$(date '+%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Get today's tags
+        id: get-today-tags
+        env:
+          TODAY_TAGS: ${{ steps.get-today.outputs.TODAY }}
+        run: echo "TODAY_TAGS=$(git tag | grep "$TODAY")" >> $GITHUB_OUTPUT
+
+      - name: Generate release tag name
+        id: generate-tag-name
+        env:
+          TODAY: ${{ steps.get-today.outputs.TODAY }}
+          TODAY_TAGS: ${{ steps.get-today-tags.outputs.TODAY_TAGS }}
+        run: |
+          TAG_NAME="$TODAY"
+          if [[ -n $TODAY_TAGS ]]; then
+            REV="$(echo $TODAY_TAGS | set -E 's/[0-9]{4}\.[0-9]{2}\.[0-9]{2}(\.([0-9]+))?/\2/' | sort -n | tail -n 1)"
+            if [[ $REV -ge 1 ]]; then
+              TAG_NAME="$TODAY.$((REV + 1))"
+            else
+              TAG_NAME="$TODAY.1"
+            fi
+          fi
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create and push release tag
+        env:
+          TAG_NAME: ${{ steps.generate-tag-name.outputs.TAG_NAME }}
+        run: |
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"

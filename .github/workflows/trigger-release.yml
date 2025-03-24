@@ -24,6 +24,8 @@ jobs:
 
       - name: Escape date for tag lookup
         id: escape-date
+        env:
+          TODAY: ${{ steps.get-today.outputs.TODAY }}
         run: echo "ESCAPED_DATE=$(echo $TODAY | sed -E 's/\./\\./g')" >> $GITHUB_OUTPUT
 
       - name: Get today's tags

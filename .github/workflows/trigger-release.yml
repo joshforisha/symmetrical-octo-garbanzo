@@ -14,11 +14,11 @@ concurrency:
 
 jobs:
   manual_deployment:
-    if: ${{ github.event.inputs.message }}
     name: Manual deployment
     runs-on: ubuntu-latest
     steps:
       - name: Commit manual deployment
+        if: ${{ github.event.inputs.message }}
         id: manual-commit
         run: |
           git commit --allow-empty -m "${{ github.event.inputs.message }}"

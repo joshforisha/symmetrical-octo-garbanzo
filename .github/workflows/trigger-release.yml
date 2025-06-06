@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+
       - name: Commit manual deployment
         if: ${{ github.event.inputs.message }}
         id: manual-commit
@@ -49,22 +50,22 @@ jobs:
           TODAY: ${{ steps.get-today.outputs.TODAY }}
         run: echo "ESCAPED_DATE=$(echo $TODAY | sed -E 's/\./\\./g')" >> $GITHUB_OUTPUT
 
-      - name: Get today's tags
-        id: get-today-tags
+      - name: Get latest tag
+        id: get-latest-tag
         env:
           ESCAPED_DATE: ${{ steps.escape-date.outputs.ESCAPED_DATE }}
           TODAY_TAGS: ${{ steps.get-today.outputs.TODAY }}
-        run: echo "TODAY_TAGS=$(git tag | grep "$ESCAPED_DATE")" >> $GITHUB_OUTPUT
+        run: echo "LATEST_TAG=$(git tag | grep "$ESCAPED_DATE" | sort -n | tail -n 1)" >> $GITHUB_OUTPUT
 
       - name: Generate release tag name
         id: generate-tag-name
         env:
           TODAY: ${{ steps.get-today.outputs.TODAY }}
-          TODAY_TAGS: ${{ steps.get-today-tags.outputs.TODAY_TAGS }}
+          LATEST_TAG: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
         run: |
           TAG_NAME="$TODAY"
-          if [[ -n $TODAY_TAGS ]]; then
-            REV="$(echo $TODAY_TAGS | set -E 's/[0-9]{4}\.[0-9]{2}\.[0-9]{2}(\.([0-9]+))?/\2/' | sort -n | tail -n 1)"
+          if [[ -n $LATEST_TAG ]]; then
+            REV="$(echo $LATEST_TAG | sed -E 's/[0-9]{4}\.[0-9]{2}\.[0-9]{2}(\.([0-9]+))?/\2/')"
             if [[ $REV -ge 1 ]]; then
               TAG_NAME="$TODAY.$((REV + 1))"
             else

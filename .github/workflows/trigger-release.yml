@@ -17,6 +17,8 @@ jobs:
     name: Manual deployment
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Monorepo
+        uses: actions/checkout@v2
       - name: Commit manual deployment
         if: ${{ github.event.inputs.message }}
         id: manual-commit

@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
-          with:
-            ref: main
+        uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Commit manual deployment
         if: ${{ github.event.inputs.message }}
         id: manual-commit

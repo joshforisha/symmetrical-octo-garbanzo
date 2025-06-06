@@ -4,13 +4,28 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Manually trigger a workflow_dispatch event via the github actions UI
+  workflow_dispatch:
+    inputs:
+      message:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}
 
 jobs:
+  manual_deployment:
+    if: ${{ github.event.inputs.message }}
+    name: Manual deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Commit manual deployment
+        id: manual-commit
+        run: |
+          git commit --allow-empty -m "${{ github.event.inputs.message }}"
+          git push
+
   tag_and_update_version:
+    needs: [manual_deployment]
     name: Tag and update version
     runs-on: ubuntu-latest
     steps:

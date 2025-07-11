@@ -47,9 +47,10 @@ jobs:
           BRANCH_NAME: ${{ steps.generate-branch-name.outputs.BRANCH_NAME }}
         run: |
           git branch ${BRANCH_NAME}
+          git push --delete origin "latest-release"
           git tag "latest-release"
           git push origin ${BRANCH_NAME}
-          git push -f origin "latest-release"
+          git push origin "latest-release"
 
       - name: Build Changelog
         id: build-changelog

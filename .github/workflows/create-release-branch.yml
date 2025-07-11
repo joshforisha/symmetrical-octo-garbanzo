@@ -13,7 +13,7 @@ jobs:
 
       - name: Get latest release tag
         id: get-latest-release-tag
-        run: echo "LATEST_RELEASE_TAG=$(git tag -l "20*" | sort -n | tail -n 1)" >> $GITHUB_OUTPUT
+        run: echo "LATEST_RELEASE_TAG=$(git tag -l "20*" | sort -V | tail -n 1)" >> $GITHUB_OUTPUT
 
       - name: Initialize branch name
         id: initialize-branch-name
@@ -58,6 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           fromTag: ${{ steps.get-latest-release-tag.outputs.LATEST_RELEASE_TAG }}
+          mode: COMMIT
           toTag: latest-release
 
       - name: Open PR

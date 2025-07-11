@@ -55,9 +55,8 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LATEST_TAG: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
         with:
-          fromTag: ${LATEST_TAG}
+          fromTag: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
 
       - name: Open PR
         env:

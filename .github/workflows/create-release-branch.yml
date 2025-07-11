@@ -15,20 +15,20 @@ jobs:
         id: initialize-branch-name
         run: echo "BRANCH_NAME=release/$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
-      - name: Get release branches
-        id: get-release-branches
+      - name: Get latest release branch
+        id: get-latest-release-branch
         env:
           BRANCH_NAME: ${{ steps.initialize-branch-name.outputs.BRANCH_NAME }}
-        run: echo "RELEASE_BRANCHES=$(git branch -r | grep "origin/${BRANCH_NAME}")" >> "$GITHUB_OUTPUT"
+        run: echo "LATEST_RELEASE_BRANCHES=$(git branch -r | grep "origin/${BRANCH_NAME}" | sort -n | tail -n 1)" >> "$GITHUB_OUTPUT"
 
       - name: Generate branch name
         id: generate-branch-name
         env:
           BRANCH_NAME: ${{ steps.initialize-branch-name.outputs.BRANCH_NAME }}
-          RELEASE_BRANCHES: ${{ steps.get-release-branches.outputs.RELEASE_BRANCHES }}
+          LATEST_RELEASE_BRANCH: ${{ steps.get-latest-release-branch.outputs.LATEST_RELEASE_BRANCH }}
         run: |
-          if [[ -n $RELEASE_BRANCHES ]]; then
-            REV="$(echo $RELEASE_BRANCHES | sed -E 's/origin\/release\/[0-9]{4}-[0-9]{2}-[0-9]{2}(_([0-9]+))?/\2/' | sort -n | tail -n 1)"
+          if [[ -n $LATEST_RELEASE_BRANCH ]]; then
+            REV="$(echo $LATEST_RELEASE_BRANCH | sed -E 's/origin\/release\/[0-9]{4}-[0-9]{2}-[0-9]{2}(_([0-9]+))?/\2/' | sort -n | tail -n 1)"
 
             if [[ $REV -ge 1 ]]; then
               BRANCH_NAME="${BRANCH_NAME}_$((REV + 1))"
@@ -42,6 +42,7 @@ jobs:
         env:
           BRANCH_NAME: ${{ steps.generate-branch-name.outputs.BRANCH_NAME }}
         run: |
+          git checkout develop
           git branch ${BRANCH_NAME}
           git tag "latest-release"
           git push --follow-tags origin ${BRANCH_NAME}

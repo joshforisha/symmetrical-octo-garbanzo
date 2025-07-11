@@ -46,11 +46,10 @@ jobs:
         env:
           BRANCH_NAME: ${{ steps.generate-branch-name.outputs.BRANCH_NAME }}
         run: |
-          git checkout develop
           git branch ${BRANCH_NAME}
           git tag "latest-release"
           git push origin ${BRANCH_NAME}
-          git push origin "latest-release"
+          git push -f origin "latest-release"
 
       - name: Build Changelog
         id: build-changelog

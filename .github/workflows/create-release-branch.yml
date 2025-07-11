@@ -43,6 +43,8 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          toTag: ${{ github.ref }}
 
       - name: Create and push release branch
         env:

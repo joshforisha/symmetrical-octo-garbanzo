@@ -11,6 +11,10 @@ jobs:
           fetch-depth: 0
           ref: develop
 
+      - name: Get latest tag
+        id: get-latest-tag
+        run: echo "LATEST_TAG=$(git tag | sort -n | tail -n 1)" >> $GITHUB_OUTPUT
+
       - name: Initialize branch name
         id: initialize-branch-name
         run: echo "BRANCH_NAME=release/$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
@@ -44,17 +48,16 @@ jobs:
         run: |
           git checkout develop
           git branch ${BRANCH_NAME}
-          git tag "latest-release"
           git push origin ${BRANCH_NAME}
-          git push origin "latest-release"
 
       - name: Build Changelog
         id: build-changelog
         uses: mikepenz/release-changelog-builder-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LATEST_TAG: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
         with:
-          toTag: latest-release
+          fromTag: ${LATEST_TAG}
 
       - name: Open PR
         env:

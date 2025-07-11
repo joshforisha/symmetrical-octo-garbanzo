@@ -38,9 +38,23 @@ jobs:
           fi
           echo "BRANCH_NAME=${BRANCH_NAME}" >> "$GITHUB_OUTPUT"
 
+      - name: Build Changelog
+        id: build-changelog
+        uses: mikepenz/release-changelog-builder-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create and push release branch
         env:
           BRANCH_NAME: ${{ steps.generate-branch-name.outputs.BRANCH_NAME }}
         run: |
           git branch ${BRANCH_NAME}
           git push origin ${BRANCH_NAME}
+
+      - name: Open PR
+        env:
+          BRANCH_NAME: ${{ steps.generate-branch-name.outputs.BRANCH_NAME }}
+          CHANGELOG: ${{ steps.build-changelog.outputs.CHANGELOG }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create -B main -H ${BRANCH_NAME} --title "release: $(date +'%Y-%m-%d')" --body "${CHANGELOG}"

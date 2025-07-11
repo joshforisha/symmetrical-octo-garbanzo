@@ -23,7 +23,7 @@ jobs:
         id: get-latest-release-branch
         env:
           BRANCH_NAME: ${{ steps.initialize-branch-name.outputs.BRANCH_NAME }}
-        run: echo "LATEST_RELEASE_BRANCHES=$(git branch -r | grep "origin/${BRANCH_NAME}" | sort -n | tail -n 1)" >> "$GITHUB_OUTPUT"
+        run: echo "LATEST_RELEASE_BRANCH=$(git branch -r | grep "origin/${BRANCH_NAME}" | sort -n | tail -n 1)" >> "$GITHUB_OUTPUT"
 
       - name: Generate branch name
         id: generate-branch-name

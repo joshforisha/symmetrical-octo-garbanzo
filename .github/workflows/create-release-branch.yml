@@ -45,13 +45,16 @@ jobs:
           git checkout develop
           git branch ${BRANCH_NAME}
           git tag "latest-release"
-          git push --follow-tags origin ${BRANCH_NAME}
+          git push origin ${BRANCH_NAME}
+          git push origin "latest-release"
 
       - name: Build Changelog
         id: build-changelog
         uses: mikepenz/release-changelog-builder-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          toTag: latest-release
 
       - name: Open PR
         env:

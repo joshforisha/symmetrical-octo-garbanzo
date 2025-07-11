@@ -55,7 +55,7 @@ jobs:
         env:
           ESCAPED_DATE: ${{ steps.escape-date.outputs.ESCAPED_DATE }}
           TODAY_TAGS: ${{ steps.get-today.outputs.TODAY }}
-        run: echo "LATEST_TAG=$(git tag | grep "$ESCAPED_DATE" | sort -n | tail -n 1)" >> $GITHUB_OUTPUT
+        run: echo "LATEST_TAG=$(git tag | grep "$ESCAPED_DATE" | sort -V | tail -n 1)" >> $GITHUB_OUTPUT
 
       - name: Generate release tag name
         id: generate-tag-name

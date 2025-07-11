@@ -58,6 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           fromTag: ${{ steps.get-latest-release-tag.outputs.LATEST_RELEASE_TAG }}
+          mode: COMMIT
           toTag: latest-release
 
       - name: Open PR

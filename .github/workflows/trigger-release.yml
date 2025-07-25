@@ -83,6 +83,8 @@ jobs:
 
       - name: Merge updates to Develop branch
         run: |
+          git config --local user.email "josh@forisha.com"
+          git config --local user.name "RoboJosh"
           git fetch origin develop
           git checkout develop
           git merge --ff origin/main -m "Autmerge changes to develop"

@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Commit manual deployment
         if: ${{ github.event.inputs.message }}
@@ -39,6 +40,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Get today's date
         id: get-today

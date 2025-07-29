@@ -1,16 +1,21 @@
 name: Check
 
 on:
+  pull_request_target:
+    branches:
+      - "release/**"
+    types:
+      - ready_for_review
   pull_request:
     branches:
       - develop
       - main
-      - release/**
+      - "release/**"
   push:
     branches:
       - develop
       - main
-      - release/**
+      - "release/**"
 
 jobs:
   run_check:

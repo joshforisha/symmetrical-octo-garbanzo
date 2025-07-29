@@ -1,3 +1,3 @@
 # Symmetrical Octo Garbanzo
 
-I have *no* idea what this means, but it's a repo alright.
+I have *no* idea what this means, but it's a repo, alright.

@@ -5,12 +5,12 @@ on:
     branches:
       - develop
       - main
-      - release/**
+      - "release/**"
   push:
     branches:
       - develop
       - main
-      - release/**
+      - "release/**"
 
 jobs:
   run_check:

@@ -85,4 +85,4 @@ jobs:
           CHANGELOG: ${{ steps.build-changelog.outputs.CHANGELOG }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create -B main -H ${BRANCH_NAME} --title "release: $(date +'%Y-%m-%d')" --body "${CHANGELOG}"
+          gh pr create -B main -H ${BRANCH_NAME} --title "release: $(date +'%Y-%m-%d')" --body "${CHANGELOG}" --web

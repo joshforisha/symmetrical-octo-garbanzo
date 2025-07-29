@@ -1,0 +1,17 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - release/**
+
+jobs:
+  run_check:
+    name: Run Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo status
+        run: |
+          echo "Status: Okay."

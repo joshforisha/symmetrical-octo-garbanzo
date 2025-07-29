@@ -1,5 +1,4 @@
-# Create a new release branched from develop
-name: Create Release Branch
+name: Create Release
 on: workflow_dispatch
 
 jobs:
